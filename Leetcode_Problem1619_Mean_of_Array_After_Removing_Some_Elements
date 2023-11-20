@@ -1,0 +1,46 @@
+int cmpfnc(const void* a, const void* b)
+{
+    return *(int*)a - *(int*)b;
+}
+double trimMean(int* arr, int arrSize) {
+    qsort(arr,arrSize,sizeof(int),cmpfnc);
+    double size = (arrSize*5)/100 , sum = 0;
+    for( int i = size ; i < arrSize - size ; i++)
+        sum += arr[i];
+    return sum / (arrSize - (size * 2));
+}
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+void merge(int arr[], int low, int mid, int high)
+{
+    int *tmp_arr = malloc(sizeof(int) * (high - low + 1)) , tmp_arr_index = 0 , i = 0 , j = 0;
+    for( i = low , j = mid + 1 ; (i <= mid) && (j <= high) ; )
+        tmp_arr[tmp_arr_index++] = (arr[i] <= arr[j]) ? arr[i++] : arr[j++];
+    while(i <= mid)
+        tmp_arr[tmp_arr_index++] = arr[i++];
+    while(j <= high)
+        tmp_arr[tmp_arr_index++] = arr[j++];
+    memcpy(&arr[low], tmp_arr, sizeof(int) * tmp_arr_index);
+    free(tmp_arr);
+}
+void merge_sort(int * arr, int low, int high)
+{
+    if(low < high)
+    {
+        int mid = (low + high)/2;
+        merge_sort(arr, low, mid);
+        merge_sort(arr, mid+1, high);
+        merge(arr, low, mid, high);
+    }
+}
+double trimMean(int* arr, int arrSize)
+{
+    merge_sort(arr, 0, arrSize-1);
+    double size = (arrSize*0.05) , sum = 0;
+    for( int i = size ; i < arrSize - size ; i++)
+        sum += arr[i];
+    return sum / (arrSize - (size * 2));
+}
